@@ -3,11 +3,48 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
 	<h1>Main page 입니다.</h1>
 	<p>
 		<p><%= msg %></p> 
 	</p>
+	<input type="text" id="msg">
+	<button id="btnSend">전송</button>
+
+
+	<input type="text" id="nickname">
+	<button id="btnChange">닉네임변경</button>
+
+	<div id="chatList"></div>
+
+	<script>
+		let socket = new io();
+		let msgInput = document.querySelector("#msg");
+		let btn = document.querySelector("#btnSend");
+		let chatList = document.querySelector("#chatList");
+
+
+		let changeBtn = document.querySelector("#btnChange");
+		let nickname = document.querySelector("#nickname");
+
+		changeBtn.addEventListener("click",()=>{
+			let nick = nickname.value;
+			socket.emit('change',{name:nick});
+		});
+
+
+		btn.addEventListener("click",()=>{
+			let msg = msgInput.value;
+			socket.emit('gondr',{text:msg});
+		});
+
+		socket.on('server-msg',(data)=>{
+			let msgDiv = document.createElement('div');
+			msgDiv.innerHTML = data.text;
+			chatList.appendChild(msgDiv);
+		});
+	</script>
 </body>
 </html>
